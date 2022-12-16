@@ -74,4 +74,10 @@ public class Ipv4AddressTest {
         }
         assertTrue(true);
     }
+    @Test
+    public void validaToStringDaClasse(){
+        final Ipv4Address ipv4Address = new Ipv4Address();
+        String resultadoEsperado = "0.0.0.0";
+        assertEquals(resultadoEsperado, ipv4Address.toString());
+    }
 }
