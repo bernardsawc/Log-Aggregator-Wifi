@@ -71,4 +71,23 @@ public class Ipv4Address {
     }
 
 
+    @Override
+    public String toString() {
+        // return "{" +
+        //     " id='" + getId() + "'" +
+        //     ", address='" + getAddress() + "'" +
+        //     "}";
+        return new StringBuilder()
+            .append(getOctetAsString((short)0))
+            .append(".")
+            .append(getOctetAsString((short)1))
+            .append(".")
+            .append(getOctetAsString((short)2))
+            .append(".")
+            .append(getOctetAsString((short)3))
+            .toString();
+    }
+
+
+
 }
