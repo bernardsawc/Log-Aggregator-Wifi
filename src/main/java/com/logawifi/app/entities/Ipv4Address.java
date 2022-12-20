@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,10 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Ipv4Address {
+
+    @Transient
+    private static final String MENSAGEM_ERRO = "tentativa de acessar um indice fora do array de octetos do ip";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private short id;
@@ -29,26 +34,26 @@ public class Ipv4Address {
 
     public String getOctetAsString(short octetIndex) throws IllegalArgumentException{
         if(!isValidOctetIndex(octetIndex))
-            throw new IllegalArgumentException("tentativa de acessar um indice fora do array de octetos do ip");
+            throw new IllegalArgumentException(MENSAGEM_ERRO);
         return ((Short) this.getOctet(octetIndex)).toString();
     }
     public short getOctet(short octetIndex) throws IllegalArgumentException{
         if(!isValidOctetIndex(octetIndex))
-            throw new IllegalArgumentException("tentativa de acessar um indice fora do array de octetos do ip");
+            throw new IllegalArgumentException(MENSAGEM_ERRO);
         return (short) (address[octetIndex]+128);
     }
     public void setOctetValue(short octetIndex, short octetValue) throws IllegalArgumentException{
         if(!isValidOctetIndex(octetIndex))
-            throw new IllegalArgumentException("tentativa de acessar um indice fora do array de octetos do ip");
+            throw new IllegalArgumentException(MENSAGEM_ERRO);
         if(!isValidOctetValue(octetValue))
             throw new IllegalArgumentException("tentativa de atribuir a um octeto um valor incompativel com o seu tipo");
         address[octetIndex] = 
                                 (
                                     (Short)(
                                         (Integer) (
-                                            Short.valueOf(octetValue).shortValue()
+                                            octetValue
                                                 +
-                                            Short.valueOf("-128").shortValue()
+                                            Short.parseShort("-128")
                                         )
                                     )
                                     .shortValue()
@@ -59,24 +64,16 @@ public class Ipv4Address {
     }
 
     private boolean isValidOctetValue(short octetValue){
-        if(octetValue>255 || octetValue<0)
-            return false;
-        return true;
+        return !(octetValue>255 || octetValue<0);
     }
 
     private boolean isValidOctetIndex(short octetIndex){
-        if(octetIndex<0 || octetIndex>3)
-            return false;
-        return true;
+        return !(octetIndex<0 || octetIndex>3);
     }
 
 
     @Override
     public String toString() {
-        // return "{" +
-        //     " id='" + getId() + "'" +
-        //     ", address='" + getAddress() + "'" +
-        //     "}";
         return new StringBuilder()
             .append(getOctetAsString((short)0))
             .append(".")
